@@ -170,35 +170,60 @@
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script>
-		let URL = "https://www.bolnews.com/feed/";
+		let myData = {}
+		let sampleArray = []
+		let sampleIteration = 0;
+		let URL = "http://localhost:5001/firstproject-aa4e6/us-central1/app/api";
 		$(document).ready(() => {
 			$.ajax({
 				url: URL,
 				type: 'GET',
-				dataType: 'xml',
-				headers: {
-					//WRITE IF THEIR HAVE SOME HEADER REQUEST OR DATA
-					"Access-Control-Allow-Origin":"*"
-				},
-				crossDomain: true,
 				success: function (data, textStatus, xhr) {
-					console.log(data);
+					myData = data["elements"][0]["elements"][0]["elements"]
+					var lucky = myData.filter(function(eachdata) {
+						if(eachdata.name =="item")
+							return eachdata.elements[0]
+					});
+
+					for (const eachData in lucky)
+					{
+						filterTitle(lucky[eachData].elements);
+					}
 				},
 				error: function (xhr, textStatus, errorThrown) {
 					console.log(errorThrown);
 				}
 			});
-			// $.ajax({
-			// 	url: "https://www.suchtv.pk/latest-news.feed",
-			// 	type: "GET",
-			// 	dataType: "xml",
-			// 	crossDomain: "true"
-			// })
-			// 	.done((xml) => {
-			// 		$("#umer").text("I maumer ");
-			// 		console.log("I am Umer");
-			// 	})
 		});
+		function filterTitle(element)
+		{
+			for (const eachElement in element)
+			{
+				if(element[eachElement].name =="title")
+				{
+					sampleArray["title"] = element[eachElement].elements[0].text;
+				}
+				else if(element[eachElement].name =="link")
+				{
+					sampleArray["link"] = element[eachElement].elements[0].text;
+				}
+				else if(element[eachElement].name =="comments")
+				{
+					sampleArray["comments"] = element[eachElement].elements[0].text;
+				}
+				else if(element[eachElement].name =="pubDate")
+				{
+					sampleArray["pubDate"] = element[eachElement].elements[0].text;
+				}
+				else if(element[eachElement].name =="description")
+				{
+					sampleArray["description"] = element[eachElement].elements[0].cdata;
+				}
+			}
+
+			console.log(sampleArray)
+			sampleIteration++;
+		}
 	</script>
 
 </body>
