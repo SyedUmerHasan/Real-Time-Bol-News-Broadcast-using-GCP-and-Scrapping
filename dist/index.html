@@ -84,39 +84,7 @@
 	<div class="row">
 		<div class="container">
 			<div class="row" id="newsCards">
-				<div class="col-md-4">
-					<div class="card">
-						<img class="card-img-top"
-							src="https://images.unsplash.com/photo-1573311568869-7aea30da5cb7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
-							alt="">
-						<div class="card-body">
-							<h5 class="card-title">Title</h5>
-							<p class="card-text">Content</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="card">
-						<img class="card-img-top"
-							src="https://images.unsplash.com/photo-1573311568869-7aea30da5cb7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
-							alt="">
-						<div class="card-body">
-							<h5 class="card-title">Title</h5>
-							<p class="card-text">Content</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="card">
-						<img class="card-img-top"
-							src="https://images.unsplash.com/photo-1573311568869-7aea30da5cb7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
-							alt="">
-						<div class="card-body">
-							<h5 class="card-title">Title</h5>
-							<p class="card-text">Content</p>
-						</div>
-					</div>
-				</div>
+				
 			</div>
 		</div>
 
@@ -170,79 +138,67 @@
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script>
+
+		async function myfunction(lucky) {
+			for (const eachData in lucky) {
+				let element = await lucky[eachData].elements;
+				sampleArray[sampleIteration++] = await filterTitle(element)
+			}
+			// AddContainer(sampleArray);
+			console.log(sampleArray)
+			for (const eachItem in sampleArray) {
+				console.log(sampleArray[eachItem])
+				AddContainer(sampleArray[eachItem])
+			}
+		}
+		function AddContainer(eachElement) {
+			document.getElementById("newsCards").innerHTML += '<div class="col-md-4"> <div class="card" ><img class="card-img-top" src="https://images.unsplash.com/photo-1573311568869-7aea30da5cb7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" alt=""><div class="card-body"><h5 class="card-title"> '+ "<a href=" + eachElement.link + ">"  + eachElement.title+ "</a>" +' </h5><p class="card-text">'+ eachElement.description +'</p></div></div></div>';
+		}
+	</script>
+	<script>
 		let myData = {}
-		let sampleArray = []
+		let sampleArray = {}
 		let sampleIteration = 0;
 		let URL = "http://localhost:5001/firstproject-aa4e6/us-central1/app/api";
 		$(document).ready(() => {
 			$.ajax({
 				url: URL,
 				type: 'GET',
-				success: function (data, textStatus, xhr) {
-					myData = data["elements"][0]["elements"][0]["elements"]
-					var lucky = myData.filter(function(eachdata) {
-						if(eachdata.name =="item")
+				success: async function (data, textStatus, xhr) {
+					myData = await data["elements"][0]["elements"][0]["elements"]
+					var lucky = myData.filter(function (eachdata) {
+						if (eachdata.name == "item")
 							return eachdata.elements[0]
 					});
-
-					for (const eachData in lucky)
-					{
-						filterTitle(lucky[eachData].elements);
-					}
+					myfunction(lucky);
 				},
 				error: function (xhr, textStatus, errorThrown) {
 					console.log(errorThrown);
 				}
 			});
-			console.log("sampleArray.length =>" + sampleArray.length)
 
-			console.log(typeof(sampleArray))
-			console.log(sampleArray)
-			sampleArray.forEach((eachElement) => {
-						console.log("I am umer")
-						document.getElementById("newsCards").innerHTML += ```
-						<div class="col-md-4">
-							<div class="card">
-								<img class="card-img-top"
-									src="
-									` + "https://images.unsplash.com/photo-1573311568869-7aea30da5cb7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"+ `"
-									alt="">
-								<div class="card-body">
-									<h5 class="card-title">` + eachElement.title + `</h5>
-									<p class="card-text">` + eachElement.description + `</p>
-								</div>
-							</div>
-						</div>
-						```;
-					})
 		});
-		function filterTitle(element)
-		{
-			sampleArray[sampleIteration] = []
-			for (const eachElement in element)
-			{
-				if(element[eachElement].name =="title")
-				{
-					sampleArray[sampleIteration]["title"] = element[eachElement].elements[0].text;
+		async function filterTitle(element) {
+			let tempSampleArray = []
+			for (const eachElement in element) {
+				if (element[eachElement].name == "title") {
+					tempSampleArray["title"] = await element[eachElement].elements[0].text;
 				}
-				else if(element[eachElement].name =="link")
-				{
-					sampleArray[sampleIteration]["link"] = element[eachElement].elements[0].text;
+				else if (element[eachElement].name == "link") {
+					tempSampleArray["link"] = await element[eachElement].elements[0].text;
 				}
-				else if(element[eachElement].name =="comments")
-				{
-					sampleArray["comments"] = element[eachElement].elements[0].text;
+				else if (element[eachElement].name == "comments") {
+					tempSampleArray["comments"] = await element[eachElement].elements[0].text;
 				}
-				else if(element[eachElement].name =="pubDate")
-				{
-					sampleArray[sampleIteration]["pubDate"] = element[eachElement].elements[0].text;
+				else if (element[eachElement].name == "pubDate") {
+					tempSampleArray["pubDate"] = await element[eachElement].elements[0].text;
 				}
-				else if(element[eachElement].name =="description")
-				{
-					sampleArray[sampleIteration]["description"] = element[eachElement].elements[0].cdata;
+				else if (element[eachElement].name == "description") {
+					tempSampleArray["description"] = await element[eachElement].elements[0].cdata;
 				}
 			}
-			sampleIteration++;
+			return await tempSampleArray
+
 		}
 	</script>
 
