@@ -83,7 +83,7 @@
 
 	<div class="row">
 		<div class="container">
-			<div class="row">
+			<div class="row" id="newsCards">
 				<div class="col-md-4">
 					<div class="card">
 						<img class="card-img-top"
@@ -194,18 +194,40 @@
 					console.log(errorThrown);
 				}
 			});
+			console.log("sampleArray.length =>" + sampleArray.length)
+
+			console.log(typeof(sampleArray))
+			console.log(sampleArray)
+			sampleArray.forEach((eachElement) => {
+						console.log("I am umer")
+						document.getElementById("newsCards").innerHTML += ```
+						<div class="col-md-4">
+							<div class="card">
+								<img class="card-img-top"
+									src="
+									` + "https://images.unsplash.com/photo-1573311568869-7aea30da5cb7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"+ `"
+									alt="">
+								<div class="card-body">
+									<h5 class="card-title">` + eachElement.title + `</h5>
+									<p class="card-text">` + eachElement.description + `</p>
+								</div>
+							</div>
+						</div>
+						```;
+					})
 		});
 		function filterTitle(element)
 		{
+			sampleArray[sampleIteration] = []
 			for (const eachElement in element)
 			{
 				if(element[eachElement].name =="title")
 				{
-					sampleArray["title"] = element[eachElement].elements[0].text;
+					sampleArray[sampleIteration]["title"] = element[eachElement].elements[0].text;
 				}
 				else if(element[eachElement].name =="link")
 				{
-					sampleArray["link"] = element[eachElement].elements[0].text;
+					sampleArray[sampleIteration]["link"] = element[eachElement].elements[0].text;
 				}
 				else if(element[eachElement].name =="comments")
 				{
@@ -213,15 +235,13 @@
 				}
 				else if(element[eachElement].name =="pubDate")
 				{
-					sampleArray["pubDate"] = element[eachElement].elements[0].text;
+					sampleArray[sampleIteration]["pubDate"] = element[eachElement].elements[0].text;
 				}
 				else if(element[eachElement].name =="description")
 				{
-					sampleArray["description"] = element[eachElement].elements[0].cdata;
+					sampleArray[sampleIteration]["description"] = element[eachElement].elements[0].cdata;
 				}
 			}
-
-			console.log(sampleArray)
 			sampleIteration++;
 		}
 	</script>
