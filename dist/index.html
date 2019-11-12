@@ -129,49 +129,76 @@
 		firebase.initializeApp(firebaseConfig);
 		firebase.analytics();
 	</script>
-	<!-- <script>
-	var xml = "<rss version='2.0'><channel><title>RSS Title</title></channel></rss>",
-	xmlDoc = $.parseXML( xml ),
-	$xml = $( xmlDoc ),
-	$title = $xml.find( "title" );
-	</script> -->
+
+	<!-- const vmResourceArr = await vmResource.reduce(async (acc, result) => {
+		let waitacc = await acc;
+		var resourceGroup = result.id.split("/")[4] || "";
+		waitacc.concat(resource);
+		return [...waitacc, resource];
+	  }, []); -->
+
+	<!-- let cloudAccountResources = await Promise.all([
+      resourceCounterHelper.getVMResources(apiEngineInstance),
+    ]); -->
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script>
 
-		async function myfunction(lucky) {
+		async function addingImageURLinArray(sampleArray) {
+			return await sampleArray.reduce(async (allarray, element) => {
+				await getImage(element["link"])
+					.then(data => {
+						element["imageurl"] = data;
+						console.log("Then block" + data)
+					})
+					.catch(error => {
+						console.log(error)
+					})
+					.finally(() => {
+						// console.log(" element => " + element)
+						console.log("Finally block")
+					})
+			}, [])
+		}
+		async function processXML(lucky) {
 			for (const eachData in lucky) {
 				let element = await lucky[eachData].elements;
 				sampleArray[sampleIteration++] = await filterTitle(element)
 			}
-			// AddContainer(sampleArray);
-			console.log(sampleArray)
-			for (const eachItem in sampleArray) {
-				console.log(sampleArray[eachItem])
-				await getImage(sampleArray[eachItem]["link"])
-				AddContainer(sampleArray[eachItem])
-			}
+
+			console.log(await addingImageURLinArray(sampleArray))
+
 		}
-		function getImage(myurl) {
-			$.ajax({
-				url: "http://localhost:5001/firstproject-aa4e6/us-central1/scrapper",
-				type: 'GET',
-				data: { obj: JSON.stringify(myurl) },
-				success: async function (data, textStatus, xhr) {
-					console.log(data);
-				},
-				error: function (xhr, textStatus, errorThrown) {
-					console.log(errorThrown);
-				}
+
+		async function addCards(sampleArray) {
+			for (const eachItem in sampleArray) {
+				await AddContainer(eachItem);
+			}
+			return await sampleArray
+		}
+		async function getImage(myurl) {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					url: "http://localhost:5001/firstproject-aa4e6/us-central1/scrapper",
+					type: 'GET',
+					data: { imageurl: myurl },
+					success: async function (data) {
+						console.log("get Image => " + data)
+						resolve(data)
+					},
+					error: function (error) {
+						reject(error)
+					}
+				});
 			});
 		}
-		function AddContainer(eachElement) {
-			document.getElementById("newsCards").innerHTML += '<div class="col-md-4"> <div class="card" ><img class="card-img-top" src="https://images.unsplash.com/photo-1573311568869-7aea30da5cb7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" alt=""><div class="card-body"><h5 class="card-title"> ' + "<a href=" + eachElement.link + ">" + eachElement.title + "</a>" + ' </h5><p class="card-text">' + eachElement.description.substring(0, 100) + '</p></div></div></div>';
+		async function AddContainer(eachElement) {
+			// document.getElementById("newsCards").innerHTML += '<div class="col-md-4"> <div class="card" ><img class="card-img-top" src="' + eachElement["imageurl"] +'" alt=""><div class="card-body"><h5 class="card-title"> ' + "<a href=" + eachElement["link"] + ">" + eachElement['title'] + "</a>" + ' </h5><p class="card-text">' + eachElement['description'].substring(0, 100) + '</p></div></div></div>';
 		}
 	</script>
 	<script>
 		let myData = {}
-		let sampleArray = {}
+		let sampleArray = []
 		let sampleIteration = 0;
 		let URL = "http://localhost:5001/firstproject-aa4e6/us-central1/app/api";
 		$(document).ready(() => {
@@ -180,11 +207,12 @@
 				type: 'GET',
 				success: async function (data, textStatus, xhr) {
 					myData = await data["elements"][0]["elements"][0]["elements"]
-					var lucky = myData.filter(function (eachdata) {
+					var scrapData = []
+					scrapData = myData.filter(function (eachdata) {
 						if (eachdata.name == "item")
 							return eachdata.elements[0]
 					});
-					myfunction(lucky);
+					processXML(scrapData);
 				},
 				error: function (xhr, textStatus, errorThrown) {
 					console.log(errorThrown);
@@ -192,6 +220,7 @@
 			});
 
 		});
+		// Gets Filtered Array from XML Response
 		async function filterTitle(element) {
 			let tempSampleArray = []
 			for (const eachElement in element) {

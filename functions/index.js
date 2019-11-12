@@ -44,9 +44,9 @@ app.get('/api', (req, res) => {
 
 exports.app = functions.https.onRequest(app);
 
-scrapper.get('/', (request, response) => {
-    cheerio_request("https://www.bolnews.com/sports/2019/11/peshawar-to-host-33rd-national-games-after-9-years/",(err, res, html)=>{
-        console.log(res.statusCode )
+scrapper.get('/',(request, response) => {
+    console.log(request.query.imageurl)
+    cheerio_request(request.query.imageurl,(err, res, html)=>{
         if(!err && res.statusCode == 200)
         {
             const $ = cheerio.load(html);
