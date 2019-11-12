@@ -158,7 +158,8 @@
 						// console.log(" element => " + element)
 						console.log("Finally block")
 					})
-			}, [])
+				return true
+			})
 		}
 		async function processXML(lucky) {
 			for (const eachData in lucky) {
@@ -166,13 +167,16 @@
 				sampleArray[sampleIteration++] = await filterTitle(element)
 			}
 
-			console.log(await addingImageURLinArray(sampleArray))
+			if(await addingImageURLinArray(sampleArray) == true)
+			{
+				await addCards(sampleArray)
+			}
 
 		}
 
 		async function addCards(sampleArray) {
 			for (const eachItem in sampleArray) {
-				await AddContainer(eachItem);
+				await AddContainer(sampleArray[eachItem]);
 			}
 			return await sampleArray
 		}
@@ -183,7 +187,6 @@
 					type: 'GET',
 					data: { imageurl: myurl },
 					success: async function (data) {
-						console.log("get Image => " + data)
 						resolve(data)
 					},
 					error: function (error) {
@@ -193,7 +196,7 @@
 			});
 		}
 		async function AddContainer(eachElement) {
-			// document.getElementById("newsCards").innerHTML += '<div class="col-md-4"> <div class="card" ><img class="card-img-top" src="' + eachElement["imageurl"] +'" alt=""><div class="card-body"><h5 class="card-title"> ' + "<a href=" + eachElement["link"] + ">" + eachElement['title'] + "</a>" + ' </h5><p class="card-text">' + eachElement['description'].substring(0, 100) + '</p></div></div></div>';
+			document.getElementById("newsCards").innerHTML += '<div class="col-md-4"> <div class="card" ><img class="card-img-top" src="' + eachElement["imageurl"] +'" alt=""><div class="card-body"><h5 class="card-title"> ' + "<a href=" + eachElement["link"] + ">" + eachElement['title'] + "</a>" + ' </h5><p class="card-text">' + eachElement['description'].substring(0, 100) + '</p></div></div></div>';
 		}
 	</script>
 	<script>
