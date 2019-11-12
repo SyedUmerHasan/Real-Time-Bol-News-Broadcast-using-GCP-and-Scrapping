@@ -81,6 +81,13 @@
 		<div class="offset-md-2 offset-sm-1"></div>
 	</div>
 
+	<div id="umer">
+		<div class="d-flex justify-content-center">
+			<div class="spinner-border" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+	</div>
 	<div class="row">
 		<div class="container">
 			<div class="row" id="newsCards">
@@ -89,7 +96,6 @@
 		</div>
 
 
-		<div id="umer"></div>
 
 	</div>
 
@@ -167,14 +173,15 @@
 				sampleArray[sampleIteration++] = await filterTitle(element)
 			}
 
-			if(await addingImageURLinArray(sampleArray) == true)
-			{
+			if (await addingImageURLinArray(sampleArray) == true) {
 				await addCards(sampleArray)
 			}
 
 		}
 
 		async function addCards(sampleArray) {
+			// document.getElementById("umer").style.visibility = "hidden";
+			$("#umer").hide().animate({opacity: 1.0},200);
 			for (const eachItem in sampleArray) {
 				await AddContainer(sampleArray[eachItem]);
 			}
@@ -196,7 +203,7 @@
 			});
 		}
 		async function AddContainer(eachElement) {
-			document.getElementById("newsCards").innerHTML += '<div class="col-md-4"> <div class="card" ><img class="card-img-top" src="' + eachElement["imageurl"] +'" alt=""><div class="card-body"><h5 class="card-title"> ' + "<a href=" + eachElement["link"] + ">" + eachElement['title'] + "</a>" + ' </h5><p class="card-text">' + eachElement['description'].substring(0, 100) + '</p></div></div></div>';
+			document.getElementById("newsCards").innerHTML += '<div class="col-md-4"> <div class="card" ><img class="card-img-top" src="' + eachElement["imageurl"] + '" alt=""><div class="card-body"><h5 class="card-title"> ' + "<a href=" + eachElement["link"] + ">" + eachElement['title'] + "</a>" + ' </h5><p class="card-text">' + eachElement['description'].substring(0, 100) + '</p></div></div></div>';
 		}
 	</script>
 	<script>
